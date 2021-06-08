@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WP To Do List
  * Plugin URI:        https://github.com/mashrurFahim/wp-to-do-list.git
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       A simple to do list widget plugin for WordPress platform.
  * Version:           1.0.0
  * Author:            Mashrur Fahim
  * Author URI:        https://github.com/mashrurFahim
