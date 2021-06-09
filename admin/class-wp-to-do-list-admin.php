@@ -100,4 +100,13 @@ class Wp_To_Do_List_Admin {
 
 	}
 
+	/**
+	 * Register WP Todo List widget
+	 * 
+	 * @since		1.0.0
+	 */
+	public function wp_to_do_list_register_widget() {
+		register_widget( 'Wp_To_Do_List_Widget' );
+	}
+
 }

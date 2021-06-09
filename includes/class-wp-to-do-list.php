@@ -100,6 +100,10 @@ class Wp_To_Do_List {
 	private function load_dependencies() {
 
 		/**
+		 * The class responsible for extending wp to do list widget form wp widget.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-to-do-list-widget.php';
+		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
@@ -156,6 +160,7 @@ class Wp_To_Do_List {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'widgets_init', $plugin_admin, 'wp_to_do_list_register_widget' );
 
 	}
 
