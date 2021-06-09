@@ -53,6 +53,7 @@ class Wp_To_Do_List_Widget extends WP_Widget {
       <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
     </p>
 
+    <?php // Widget Enable Input Field ?>
     <p>
       <input id="<?php echo esc_attr( $this->get_field_id( 'enable_input' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'enable_input' ) ); ?>" type="checkbox" value="1" <?php checked( '1', $enable_input ); ?> />
       <label for="<?php echo esc_attr( $this->get_field_id( 'enable_input' ) ); ?>"><?php _e( 'Enable/Disable task entry field', 'wp-to-do-list' ); ?></label>
@@ -71,6 +72,7 @@ class Wp_To_Do_List_Widget extends WP_Widget {
 	// Display the widget
 	public function widget( $args, $instance ) {
 		
+    extract($args);
 
     // Check the widget options
     $title    = isset( $instance['title'] ) ? apply_filters( 'widget_title', $instance['title'] ) : '';
@@ -79,23 +81,44 @@ class Wp_To_Do_List_Widget extends WP_Widget {
     // WordPress core before_widget hook (always include )
     echo $before_widget;
 
-    // Display the widget
-    echo '<div class="widget-text wp_widget_plugin_box">';
+    if ( $title ) {
+      echo $before_title . $title . $after_title;
+    }
 
+    // Widget Content
     ?>
+    <div class="todo-list">
+    
+      <div class="todo-body">
+        <div class="tasks">
+          <div class="task">
+            <input 
+              type="checkbox"
+              id="task-1"
+            />
+            <label for="task-1">
+              <span class="custom-checkbox"></span>
+              record todo list video
+            </label>
+          </div>
+        </div>
+        <?php if($enable_input) : ?>
+        <div class="new-task-creator">
+          <form action="">
+              <input 
+                type="text"
+                class="new task"
+                placeholder="new task name"
+                aria-label="new task name"
+              />
+              <button class="btn create" aria-label="create new task">+</button>
+            </form>
+        </div>
+        <?php endif; ?>
+      </div>
+    </div>
 
     <?php
-      
-      // Display widget title if defined
-      if ( $title ) {
-        echo $before_title . $title . $after_title;
-      }
-
-      $input_status = $enable_input ? 'Enable' : 'Disable';
-      echo '<p>Input Field Is ' . $input_status . '</p>';
-
-    echo '</div>';
-
     // WordPress core after_widget hook (always include )
     echo $after_widget;
 	}
