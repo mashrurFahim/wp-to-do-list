@@ -72,6 +72,7 @@ class Wp_To_Do_List_Widget extends WP_Widget {
 	// Display the widget
 	public function widget( $args, $instance ) {
 		
+
     extract($args);
 
     // Check the widget options
@@ -86,39 +87,8 @@ class Wp_To_Do_List_Widget extends WP_Widget {
     }
 
     // Widget Content
-    ?>
-    <div class="todo-list">
+    include plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/wp-to-do-list-public-display.php';
     
-      <div class="todo-body">
-        <div class="tasks">
-          <div class="task">
-            <input 
-              type="checkbox"
-              id="task-1"
-            />
-            <label for="task-1">
-              <span class="custom-checkbox"></span>
-              record todo list video
-            </label>
-          </div>
-        </div>
-        <?php if($enable_input) : ?>
-        <div class="new-task-creator">
-          <form action="">
-              <input 
-                type="text"
-                class="new task"
-                placeholder="new task name"
-                aria-label="new task name"
-              />
-              <button class="btn create" aria-label="create new task">+</button>
-            </form>
-        </div>
-        <?php endif; ?>
-      </div>
-    </div>
-
-    <?php
     // WordPress core after_widget hook (always include )
     echo $after_widget;
 	}
