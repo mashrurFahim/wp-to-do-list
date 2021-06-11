@@ -100,8 +100,39 @@ class Wp_To_Do_List_Public {
 		
 		wp_localize_script( $this->plugin_name, 'wpTodoListAjax', array(
 					'ajaxURL'	=> admin_url( 'admin-ajax.php' ),
+					'nonce'		=> wp_create_nonce( 'wp_to_do_list_nonce' )
 				));
 
+	}
+
+	public function render_checkbox_ajax() {
+		if( ! wp_verify_nonce( $_POST['nonce'], 'wp_to_do_list_nonce' ) ) {
+        wp_send_json_error();
+        wp_die();
+    }
+
+		if ( ! check_ajax_referer( 'wp_to_do_list_nonce', 'nonce', false ) ) {
+        wp_send_json_error( 'Invalid security token sent.' );
+        wp_die();
+    }
+
+		if ( !isset($_POST['task_id']) && empty($_POST['task_id'])) {
+			wp_send_json_error( 'Task ID is empty can not operate.' );
+      wp_die();
+		}
+
+		$task_id = $_POST['task_id'];
+
+		$task_status = $_POST['task_status'];
+
+		$this->update_db_operation($task_id, $task_status);
+
+		$response_data = array(
+			'task_id'				=> $task_id,
+			'task_status'		=> $task_status,
+		);
+
+		wp_die(json_encode($response_data));
 	}
 
 	public function render_form_ajax() {
@@ -125,35 +156,52 @@ class Wp_To_Do_List_Public {
 		$new_task = sanitize_text_field( $_POST['new_task'] );
 		$current_time = current_time( 'mysql' );
 
-		global $wpdb;
-    $table_name = $wpdb->prefix . "wp_to_do_list";
-    $wp_to_do_list_db_version = get_option( 'wp-to-do-list_db_version', '1.0.0' );
-    $data = array(
+		$data = array(
         'widget_id'     => $widget_id,
         'creator_id'    => $user_id,
         'task_name'     => $new_task,
-				'task_status'		=> 0,
         'created_at'    => $current_time,
         
     );
-    $format = array( '%s','%d', '%s', '%d', '%s' );
 
-    $wpdb->insert( $table_name, $data, $format );
+		$task_id = $this->insert_db_operation($data);
 
-		$task_id = $wpdb->insert_id;
-
-		$response_data = array(
-			'task_id'				=> $task_id,
-			'widget_id'     => $widget_id,
-			'creator_id'    => $user_id,
-			'task_name'     => $new_task,
-			'task_status'		=> 0,
-			'created_at'    => $current_time,
-		);
+		$response_data = array_merge( array('task_id'=> $task_id), $data );
 
     // print_r($response_data); 
 
 		wp_die(json_encode($response_data));
+	}
+
+	public function insert_db_operation($data) {
+		
+		global $wpdb;
+    
+		$table_name = $wpdb->prefix . "wp_to_do_list";
+
+    $format = array( '%s','%d', '%s', '%d', '%s' );
+		$wpdb->insert( $table_name, $data, $format );
+		return $wpdb->insert_id;
+	}
+
+	public function update_db_operation($task_id, $task_status) {
+
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . "wp_to_do_list";
+    $data = array(
+        'task_status'  => $task_status,
+    );
+    $format = array( '%s');
+    $where = array(
+        'task_id' => $task_id
+    );
+    $where_format = array(
+        '%d'
+    );
+
+    return $wpdb->update( $table_name, $data, $where, $format, $where_format );
+
 	}
 
 	public static function get_all_task() {

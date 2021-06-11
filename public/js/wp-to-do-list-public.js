@@ -33,35 +33,30 @@
     $('#wp-to-do-list-form button').on('click', function (event) {
       event.preventDefault() // Prevent the default form submit.
 
-      //add our own ajax check as X-Requested-With is not always reliable
-      // ajax_form_data = ajax_form_data + '&ajaxrequest=true&submit=Submit+Form'
-
       var $newTaskObj = $('input#wp-to-do-list-task')
-
-      var nonceInputVal = $('input#wp-to-do-list-nonce').val()
       var widgetInputVal = $('input#wp-to-do-list-widget').val()
       var userInputVal = $('input#wp-to-do-list-user').val()
       var newTaskVal = $newTaskObj.val()
-
       var dataJSON = {
         action: 'render_ajax',
-        nonce: nonceInputVal,
+        nonce: wpTodoListAjax.nonce,
         widget_id: widgetInputVal,
         user_id: userInputVal,
         new_task: newTaskVal,
       }
 
-      console.log(dataJSON)
+      console.dir('data json = ' + dataJSON)
 
       $.ajax({
         url: wpTodoListAjax.ajaxURL,
-        nonce: nonceInputVal,
+        nonce: wpTodoListAjax.nonce,
         type: 'POST',
         data: dataJSON,
-        success: function (response) {
-          renderNewTask(response)
+        success: function (response, eventType) {
+          let responseObj = JSON.parse(response)
+          renderNewTask(responseObj)
           $newTaskObj.val('')
-          console.log(response)
+          console.log('data response = ' + response)
           console.log('success')
         },
         error: function (xhr, status, error) {
@@ -70,10 +65,52 @@
         },
       })
     })
+
+    $('input[type=checkbox], input[type=checkbox] label').on(
+      'click',
+      function (event) {
+        var currentTaskID = event.target.id
+        var currentTaskIDInt = parseInt(
+          currentTaskID.replace(/[^0-9]/g, ''),
+          10
+        )
+
+        var currentTaskCheckbox = document.getElementById(currentTaskID)
+        var currentTaskStatus = event.target.checked
+        var dataCheckBoxJSON = {
+          action: 'render_status_ajax',
+          nonce: wpTodoListAjax.nonce,
+          task_id: currentTaskIDInt,
+          task_status: currentTaskStatus ? 'completed' : 'incomplete',
+        }
+
+        console.log(dataCheckBoxJSON)
+
+        $.ajax({
+          url: wpTodoListAjax.ajaxURL,
+          nonce: wpTodoListAjax.nonce,
+          type: 'POST',
+          data: dataCheckBoxJSON,
+          success: function (response) {
+            let responseObj = JSON.parse(response)(
+              responseObj.task_status === 'completed'
+            )
+              ? currentTaskCheckbox.setAttribute('checked', 'checked')
+              : currentTaskCheckbox.removeAttribute('checked')
+            console.log('data response = ' + responseObj)
+            console.log('task status = ' + responseObj.task_status)
+            console.log('success')
+          },
+          error: function (xhr, status, error) {
+            console.log('Status: ' + xhr.status)
+            console.log('Error: ' + xhr.responseText)
+          },
+        })
+      }
+    )
   })
 
-  let renderNewTask = (response) => {
-    let responseObj = JSON.parse(response)
+  let renderNewTask = (responseObj) => {
     console.log(responseObj)
     const widgetSection = document.querySelector('#' + responseObj.widget_id)
     console.log(widgetSection)

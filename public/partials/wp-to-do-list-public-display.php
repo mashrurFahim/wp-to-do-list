@@ -22,8 +22,6 @@ if(is_user_logged_in()) {
   $user_id = 0;
 }
 
-$wp_to_do_list_nonce = wp_create_nonce( 'wp_to_do_list_nonce' );
-
 $all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_id, $widget_id);
 
 
@@ -37,6 +35,7 @@ $all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_i
         <input 
           type="checkbox"
           id="task-<?php echo $task->task_id; ?>"
+          <?php echo ($task->task_status == 'completed') ? 'checked=checked' : ''; ?>
         />
         <label for="task-<?php echo $task->task_id; ?>">
           <span class="custom-checkbox"></span>
@@ -54,13 +53,6 @@ $all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_i
             value="render_ajax"
           />
 
-          <input
-            type="hidden"
-            name="wp_to_do_list_nonce"
-            value="<?php echo $wp_to_do_list_nonce ?>"
-            id="wp-to-do-list-nonce"
-          />
-          
           <input 
             type="hidden"
             name="wp_to_do_list[user_id]"
