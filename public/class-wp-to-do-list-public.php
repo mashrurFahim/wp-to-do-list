@@ -183,11 +183,11 @@ class Wp_To_Do_List_Public {
 		return $results;
 	}
 
-	public static function get_all_task_of_widget_of_single_user($user_id, $wiget_id) {
+	public static function get_all_task_of_widget_of_single_user($user_id, $widget_id) {
 		global $wpdb;
     $table_name = $wpdb->prefix . "wp_to_do_list";
 		$results = $wpdb->get_results( 
-								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d & widget_id=%s", $user_id, $wiget_id) 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d AND widget_id=%s", $user_id, $widget_id) 
 							);
 		return $results;
 	}
