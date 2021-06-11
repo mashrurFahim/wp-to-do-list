@@ -50,7 +50,7 @@ class Wp_To_Do_List_Activator {
 				widget_id varchar(256) NOT NULL,
 				creator_id integer NOT NULL,
 				task_name text DEFAULT '' NOT NULL,
-				task_status bit DEFAULT 0 NOT NULL,
+				task_status varchar(10) DEFAULT 'incomplete' NOT NULL,
 				created_at DATETIME DEFAULT '0000-00-00 00:00:00',
 				PRIMARY KEY  (task_id)
 			) $charset_collate;";
