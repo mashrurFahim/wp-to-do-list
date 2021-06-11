@@ -97,7 +97,52 @@ class Wp_To_Do_List_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-to-do-list-public.js', array( 'jquery' ), $this->version, false );
+		
+		wp_localize_script( $this->plugin_name, 'wpTodoListAjax', array(
+					'ajaxURL'	=> admin_url( 'admin-ajax.php' ),
+				));
 
+	}
+
+	public function render_form_ajax() {
+		if( ! wp_verify_nonce( $_POST['nonce'], 'wp_to_do_list_nonce' ) ) {
+        wp_send_json_error();
+        wp_die();
+    }
+
+		if ( ! check_ajax_referer( 'wp_to_do_list_nonce', 'nonce', false ) ) {
+        wp_send_json_error( 'Invalid security token sent.' );
+        wp_die();
+    }
+
+		if ( empty( $_POST['new_task'] ) ) {
+        echo __("Task can't be empty", 'wp-to-do-list');
+        wp_die();
+    }
+
+		$widget_id = sanitize_key( $_POST['widget_id']);
+		$user_id = absint($_POST['user_id']);
+		$new_task = sanitize_text_field( $_POST['new_task'] );
+
+
+		global $wpdb;
+    $table_name = $wpdb->prefix . "wp_to_do_list";
+    $wp_to_do_list_db_version = get_option( 'wp-to-do-list_db_version', '1.0.0' );
+    $data = array(
+        'widget_id'     => $widget_id,
+        'creator_id'    => $user_id,
+        'task_name'     => $new_task,
+				'task_status'		=> 0,
+        'created_at'    => current_time( 'mysql' ),
+        
+    );
+    $format = array( '%s','%d', '%s', '%d', '%s' );
+
+    $wpdb->insert( $table_name, $data, $format );
+
+    echo $wpdb->insert_id;
+
+		wp_die();
 	}
 
 }

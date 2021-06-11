@@ -177,6 +177,8 @@ class Wp_To_Do_List {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_ajax_render_ajax', $plugin_public, 'render_form_ajax');
+    $this->loader->add_action( 'wp_ajax_nopriv_render_ajax', $plugin_public, 'render_form_ajax');
 
 	}
 
