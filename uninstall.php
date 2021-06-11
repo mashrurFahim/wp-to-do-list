@@ -29,3 +29,8 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+global $wpdb;
+$table_name = $wpdb->prefix . "wp_to_do_list";		
+$wpdb->query( $wpdb->prepare("DROP TABLE IF EXISTS $table_name"));
+delete_option("wp-to-do-list_db_version");
