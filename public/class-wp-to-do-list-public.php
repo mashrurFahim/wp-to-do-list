@@ -123,7 +123,7 @@ class Wp_To_Do_List_Public {
 		$widget_id = sanitize_key( $_POST['widget_id']);
 		$user_id = absint($_POST['user_id']);
 		$new_task = sanitize_text_field( $_POST['new_task'] );
-
+		$current_time = current_time( 'mysql' );
 
 		global $wpdb;
     $table_name = $wpdb->prefix . "wp_to_do_list";
@@ -133,16 +133,63 @@ class Wp_To_Do_List_Public {
         'creator_id'    => $user_id,
         'task_name'     => $new_task,
 				'task_status'		=> 0,
-        'created_at'    => current_time( 'mysql' ),
+        'created_at'    => $current_time,
         
     );
     $format = array( '%s','%d', '%s', '%d', '%s' );
 
     $wpdb->insert( $table_name, $data, $format );
 
-    echo $wpdb->insert_id;
+		$task_id = $wpdb->insert_id;
 
-		wp_die();
+		$response_data = array(
+			'task_id'				=> $task_id,
+			'widget_id'     => $widget_id,
+			'creator_id'    => $user_id,
+			'task_name'     => $new_task,
+			'task_status'		=> 0,
+			'created_at'    => $current_time,
+		);
+
+    // print_r($response_data); 
+
+		wp_die(json_encode($response_data));
+	}
+
+	public static function get_all_task() {
+		global $wpdb;
+    $table_name = $wpdb->prefix . "wp_to_do_list";
+		$results = $wpdb->get_results( 
+								$wpdb->prepare("SELECT * FROM $table_name") 
+							);
+		return $results;
+	}
+
+	public static function get_all_task_of_widget($wiget_id) {
+		global $wpdb;
+    $table_name = $wpdb->prefix . "wp_to_do_list";
+		$results = $wpdb->get_results( 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE widget_id=%s", $wiget_id) 
+							);
+		return $results;
+	}
+
+	public static function get_all_task_of_user($user_id) {
+		global $wpdb;
+    $table_name = $wpdb->prefix . "wp_to_do_list";
+		$results = $wpdb->get_results( 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d", $user_id) 
+							);
+		return $results;
+	}
+
+	public static function get_all_task_of_widget_of_single_user($user_id, $wiget_id) {
+		global $wpdb;
+    $table_name = $wpdb->prefix . "wp_to_do_list";
+		$results = $wpdb->get_results( 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d & widget_id=%s", $user_id, $wiget_id) 
+							);
+		return $results;
 	}
 
 }

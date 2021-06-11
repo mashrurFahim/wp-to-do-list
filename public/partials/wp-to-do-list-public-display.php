@@ -24,21 +24,26 @@ if(is_user_logged_in()) {
 
 $wp_to_do_list_nonce = wp_create_nonce( 'wp_to_do_list_nonce' );
 
+$all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_id, $widget_id);
+
+
 ?>
 
 <div class="todo-list">
   <div class="todo-body">
     <div class="tasks">
-      <div class="task">
+    <?php foreach($all_tasks as $task): ?>
+      <div class="task" >
         <input 
           type="checkbox"
-          id="task-1"
+          id="task-<?php echo $task->task_id; ?>"
         />
-        <label for="task-1">
+        <label for="task-<?php echo $task->task_id; ?>">
           <span class="custom-checkbox"></span>
-          record todo list video
+          <?php echo $task->task_name; ?>
         </label>
       </div>
+      <?php endforeach; ?>
     </div>
     <?php if($enable_input) : ?>
       <div class="new-task-creator">
@@ -85,3 +90,12 @@ $wp_to_do_list_nonce = wp_create_nonce( 'wp_to_do_list_nonce' );
     <?php endif; ?>
   </div>
 </div>
+
+<template id="task-template">
+  <div class="task">
+    <input type="checkbox" />
+    <label>
+      <span class="custom-checkbox"></span>
+    </label>
+  </div>
+</template>
