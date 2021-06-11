@@ -55,7 +55,7 @@
 
       $.ajax({
         url: wpTodoListAjax.ajaxURL,
-        nonce: wpTodoListAjax._nonce,
+        nonce: nonceInputVal,
         type: 'POST',
         data: dataJSON,
         success: function (response) {
