@@ -25,10 +25,17 @@ if(is_user_logged_in()) {
 $all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_id, $widget_id);
 
 
+$options = get_option('wp-to-do-list');
+$enable_widget_text_input = $options['enable_widget_text_input'];
+
+
+$enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_text_input
+
 ?>
 
 <div class="todo-list">
   <div class="todo-body">
+    <?php if(!empty($all_tasks)) : ?>
     <div class="tasks">
     <?php foreach($all_tasks as $task): ?>
       <div class="task" >
@@ -44,6 +51,9 @@ $all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_i
       </div>
       <?php endforeach; ?>
     </div>
+    <?php else: ?>
+    <h5><?php echo __('No Task To Show', 'wp-to-do-list'); ?></h5>
+    <?php endif; ?>
     <?php if($enable_input) : ?>
       <div class="new-task-creator">
         <form action="" method="POST" id="wp-to-do-list-form">

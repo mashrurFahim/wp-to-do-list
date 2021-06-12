@@ -36,12 +36,14 @@ class Wp_To_Do_List_Widget extends WP_Widget {
   }
   
   // The widget form (for the backend )
-	public function form( $instance ) {	
+	public function form( $instance ) {
+    
+    $options = get_option('wp-to-do-list');
 		
     // Set widget defaults
     $defaults = array(
       'title'    => __('Simple Todo List', 'wp-to-do-list'),
-      'enable_input' => '',
+      'enable_input' => $options['enable_widget_text_input'],
     );
 
     // Parse current settings with defaults
