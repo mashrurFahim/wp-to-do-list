@@ -164,6 +164,8 @@ class Wp_To_Do_List_Admin {
 			$options = get_option( $this->plugin_name );
 
 			$options['enable_widget_text_input'] = ( isset( $input['enable_widget_text_input'] ) && ! empty( $input['enable_widget_text_input'] ) ) ? 1 : 0;
+
+			$options['enable_shortcode_text_input'] = ( isset( $input['enable_shortcode_text_input'] ) && ! empty( $input['enable_shortcode_text_input'] ) ) ? 1 : 0;
 			
 			return $options;
 

@@ -27,6 +27,8 @@ if ( ! defined( 'WPINC' ) ) die;
       
       $enable_widget_text_input = ( isset( $options['enable_widget_text_input'] ) && ! empty( $options['enable_widget_text_input'] ) ) ? 1 : 0;
 
+      $enable_shortcode_text_input = ( isset( $options['enable_shortcode_text_input'] ) && ! empty( $options['enable_shortcode_text_input'] ) ) ? 1 : 0;
+
       settings_fields($this->plugin_name);
       do_settings_sections($this->plugin_name);
 
@@ -41,6 +43,17 @@ if ( ! defined( 'WPINC' ) ) die;
       <label for="<?php echo $this->plugin_name; ?>-enable-widget-input">
         <input type="checkbox" id="<?php echo $this->plugin_name; ?>-enable-widget-input" name="<?php echo $this->plugin_name; ?>[enable_widget_text_input]" value="1" <?php checked( $enable_widget_text_input, 1 ); ?> />
         <span><?php esc_attr_e('Enable Widget Input Field', 'wp-to-do-list' ); ?></span>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <p><?php esc_attr_e( 'This settings is used for displaying new task field in shortcode area.', 'wp-to-do-list' ); ?></p>
+      <legend class="enable-shortcode-input">
+        <span><?php esc_attr_e( 'Note: By Enableing it, New task input field in shortcode enable globally .', 'wp-to-do-list' ); ?></span>
+      </legend>
+      <label for="<?php echo $this->plugin_name; ?>-enable-shortcode-input">
+        <input type="checkbox" id="<?php echo $this->plugin_name; ?>-enable-shortcode-input" name="<?php echo $this->plugin_name; ?>[enable_shortcode_text_input]" value="1" <?php checked( $enable_shortcode_text_input, 1 ); ?> />
+        <span><?php esc_attr_e('Enable Shortcode Input Field', 'wp-to-do-list' ); ?></span>
       </label>
     </fieldset>
 
