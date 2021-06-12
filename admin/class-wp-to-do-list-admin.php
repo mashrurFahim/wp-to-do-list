@@ -109,4 +109,72 @@ class Wp_To_Do_List_Admin {
 		register_widget( 'Wp_To_Do_List_Widget' );
 	}
 
+	/**
+	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_plugin_admin_menu() {
+
+		// Have options to show it in under plugins menu
+		// add_submenu_page( 'plugins.php', 'WP TO DO LIST', 'wp-to-do-list-admin-menu', 'manage_options', $this->plugin_name, array($this, 'display_plugin_setup_page' ) );
+		
+		// Show it in Settings Menu
+		add_options_page( 'WP TO DO LIST', __( 'WP To Do List Widget', 'wp-to-do-list' ), 'manage_options', $this->plugin_name, array( $this, 'display_plugin_setup_page' ) );
+
+
+
+	}
+
+	/**
+	 * Add settings action link to the plugins page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_action_links( $links ) {
+
+			// $settings_link = array( '<a href="' . admin_url( 'plugins.php?page=' . $this->plugin_name ) . '">' . __( 'Settings', $this->plugin_name ) . '</a>', );
+
+			// -- OR --
+
+			$settings_link = array( '<a href="' . admin_url( 'options-general.php?page=' . $this->plugin_name ) . '">' . __( 'Settings', $this->plugin_name ) . '</a>', );
+
+			return array_merge(  $settings_link, $links );
+
+	}
+
+	/**
+	 * Render the settings page for this plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_plugin_setup_page() {
+
+			include_once( 'partials/' . $this->plugin_name . '-admin-display.php' );
+
+	}
+
+	/**
+	 * Validate fields from admin area plugin settings form ('wp-to-do-list-admin-display.php')
+	 * @param  mixed $input as field form settings form
+	 * @return mixed as validated fields
+	 */
+	public function validate($input) {
+
+			$options = get_option( $this->plugin_name );
+
+			$options['enable_widget_text_input'] = ( isset( $input['enable_widget_text_input'] ) && ! empty( $input['enable_widget_text_input'] ) ) ? 1 : 0;
+			
+			return $options;
+
+	}
+
+	public function options_update() {
+
+			register_setting( $this->plugin_name, $this->plugin_name, array(
+				'sanitize_callback' => array( $this, 'validate' ),
+			) );
+
+	}
+
 }
