@@ -29,7 +29,7 @@ $options = get_option('wp-to-do-list');
 $enable_widget_text_input = $options['enable_widget_text_input'];
 
 
-$enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_text_input
+$enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_text_input ;
 
 ?>
 
