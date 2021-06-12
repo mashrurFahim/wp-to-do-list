@@ -240,4 +240,10 @@ class Wp_To_Do_List_Public {
 		return $results;
 	}
 
+
+	public function register_wp_to_do_list_shortcode( $atts ) {
+
+    return 'this is a shortcode';
+}
+
 }
