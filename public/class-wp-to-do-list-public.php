@@ -243,7 +243,41 @@ class Wp_To_Do_List_Public {
 
 	public function register_wp_to_do_list_shortcode( $atts ) {
 
-    return 'this is a shortcode';
-}
+		STATIC $i = 1;
 
+		if(is_user_logged_in()) {
+			$user_id = get_current_user_id();
+		} else {
+			$user_id = 0;
+		}
+
+		$options = get_option('wp-to-do-list');
+		$enable_shortcode_text_input = $options['enable_shortcode_text_input'];
+
+
+		$shortcode_id = 'wp-to-do-list-shortcode-'.$i;
+
+		$default_options = array(
+			'title' => __('simple todo list', 'wp-to-do-list'),
+			'user_id' => $user_id,
+			'enable_shortcode_input' => $enable_shortcode_text_input,
+			
+		);
+
+		$data = shortcode_atts( $default_options, $atts );
+
+		
+		$enable_input = ($enable_shortcode_text_input) ? $data['enable_shortcode_input'] : $enable_shortcode_text_input;
+
+		$all_tasks = self::get_all_task_of_widget_of_single_user($data['user_id'], $shortcode_id);
+
+
+		ob_start();
+
+		include 'partials/wp-to-do-list-shortcode-html.php';
+
+		return ob_get_clean();
+
+		$i++;
+	}
 }
