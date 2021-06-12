@@ -47,7 +47,7 @@ class Wp_To_Do_List_Activator {
 
 			$sql = "CREATE TABLE $table_name (
 				task_id integer NOT NULL AUTO_INCREMENT,
-				widget_id varchar(256) NOT NULL,
+				wrapper_id varchar(256) NOT NULL,
 				creator_id integer NOT NULL,
 				task_name text DEFAULT '' NOT NULL,
 				task_status varchar(10) DEFAULT 'incomplete' NOT NULL,
