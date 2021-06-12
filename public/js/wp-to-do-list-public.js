@@ -55,6 +55,7 @@
         success: function (response, eventType) {
           let responseObj = JSON.parse(response)
           renderNewTask(responseObj)
+          checkboxStatusChange()
           $newTaskObj.val('')
           console.log('data response = ' + response)
           console.log('success')
@@ -66,6 +67,29 @@
       })
     })
 
+    checkboxStatusChange()
+  })
+
+  let renderNewTask = (responseObj) => {
+    console.log(responseObj)
+    const widgetSection = document.querySelector('#' + responseObj.widget_id)
+    console.log(widgetSection)
+    const tasksContainer = widgetSection.querySelector('.tasks')
+    console.log(tasksContainer)
+    const taskTemplate = document.getElementById('task-template')
+    console.log(taskTemplate)
+    const taskElement = document.importNode(taskTemplate.content, true)
+    const checkbox = taskElement.querySelector('input')
+    checkbox.id = responseObj.task_id
+    checkbox.checked = responseObj.task_status
+    const label = taskElement.querySelector('label')
+    label.htmlFor = responseObj.task_id
+    label.append(responseObj.task_name)
+    tasksContainer.appendChild(taskElement)
+    // checkboxStatusChange()
+  }
+
+  let checkboxStatusChange = () => {
     $('input[type=checkbox], input[type=checkbox] label').on(
       'click',
       function (event) {
@@ -108,23 +132,5 @@
         })
       }
     )
-  })
-
-  let renderNewTask = (responseObj) => {
-    console.log(responseObj)
-    const widgetSection = document.querySelector('#' + responseObj.widget_id)
-    console.log(widgetSection)
-    const tasksContainer = widgetSection.querySelector('.tasks')
-    console.log(tasksContainer)
-    const taskTemplate = document.getElementById('task-template')
-    console.log(taskTemplate)
-    const taskElement = document.importNode(taskTemplate.content, true)
-    const checkbox = taskElement.querySelector('input')
-    checkbox.id = responseObj.task_id
-    checkbox.checked = responseObj.task_status
-    const label = taskElement.querySelector('label')
-    label.htmlFor = responseObj.task_id
-    label.append(responseObj.task_name)
-    tasksContainer.appendChild(taskElement)
   }
 })(jQuery)
