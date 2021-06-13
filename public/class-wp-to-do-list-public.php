@@ -151,13 +151,13 @@ class Wp_To_Do_List_Public {
         wp_die();
     }
 
-		$widget_id = sanitize_key( $_POST['widget_id']);
+		$wrapper_id = sanitize_key( $_POST['wrapper_id']);
 		$user_id = absint($_POST['user_id']);
 		$new_task = sanitize_text_field( $_POST['new_task'] );
 		$current_time = current_time( 'mysql' );
 
 		$data = array(
-        'widget_id'     => $widget_id,
+        'wrapper_id'     => $wrapper_id,
         'creator_id'    => $user_id,
         'task_name'     => $new_task,
         'created_at'    => $current_time,
@@ -213,11 +213,11 @@ class Wp_To_Do_List_Public {
 		return $results;
 	}
 
-	public static function get_all_task_of_widget($wiget_id) {
+	public static function get_all_task_of_wrapper($wrapper_id) {
 		global $wpdb;
     $table_name = $wpdb->prefix . "wp_to_do_list";
 		$results = $wpdb->get_results( 
-								$wpdb->prepare("SELECT * FROM $table_name WHERE widget_id=%s", $wiget_id) 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE wrapper_id=%s", $wrapper_id) 
 							);
 		return $results;
 	}
@@ -231,19 +231,17 @@ class Wp_To_Do_List_Public {
 		return $results;
 	}
 
-	public static function get_all_task_of_widget_of_single_user($user_id, $widget_id) {
+	public static function get_all_task_of_wrapper_of_single_user($user_id, $wrapper_id) {
 		global $wpdb;
     $table_name = $wpdb->prefix . "wp_to_do_list";
 		$results = $wpdb->get_results( 
-								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d AND widget_id=%s", $user_id, $widget_id) 
+								$wpdb->prepare("SELECT * FROM $table_name WHERE creator_id=%d AND wrapper_id=%s", $user_id, $wrapper_id) 
 							);
 		return $results;
 	}
 
 
 	public function register_wp_to_do_list_shortcode( $atts ) {
-
-		STATIC $i = 1;
 
 		if(is_user_logged_in()) {
 			$user_id = get_current_user_id();
@@ -255,7 +253,7 @@ class Wp_To_Do_List_Public {
 		$enable_shortcode_text_input = $options['enable_shortcode_text_input'];
 
 
-		$shortcode_id = 'wp-to-do-list-shortcode-'.$i;
+		$wrapper_id = 'wp-to-do-list-shortcode-'.self::get_shortcode_id(true);
 
 		$default_options = array(
 			'title' => __('simple todo list', 'wp-to-do-list'),
@@ -269,15 +267,25 @@ class Wp_To_Do_List_Public {
 		
 		$enable_input = ($enable_shortcode_text_input) ? $data['enable_shortcode_input'] : $enable_shortcode_text_input;
 
-		$all_tasks = self::get_all_task_of_widget_of_single_user($data['user_id'], $shortcode_id);
+		$all_tasks = self::get_all_task_of_wrapper_of_single_user($data['user_id'], $wrapper_id);
 
+		$user_id = $data['user_id'];
 
 		ob_start();
 
-		include 'partials/wp-to-do-list-shortcode-html.php';
+  	echo '<h3>'.$data['title'].'</h3>';
+
+		include 'partials/wp-to-do-list-public-display.php';
+
 
 		return ob_get_clean();
-
-		$i++;
 	}
+
+	public static function get_shortcode_id( $set=false ) {
+  static $id = 0;
+  if ( $set ) {
+    $id++;
+  }  
+  return( $id );
+}
 }

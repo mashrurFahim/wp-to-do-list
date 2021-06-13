@@ -88,6 +88,23 @@ class Wp_To_Do_List_Widget extends WP_Widget {
       echo $before_title . $title . $after_title;
     }
 
+    if(is_user_logged_in()) {
+      $user_id = get_current_user_id();
+    } else {
+      $user_id = 0;
+    }
+
+    $all_tasks = Wp_To_Do_List_Public::get_all_task_of_wrapper_of_single_user($user_id, $widget_id);
+
+
+    $options = get_option('wp-to-do-list');
+    $enable_widget_text_input = $options['enable_widget_text_input'];
+
+
+    $enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_text_input ;
+
+    $wrapper_id = $widget_id;
+
     // Widget Content
     include plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/wp-to-do-list-public-display.php';
     

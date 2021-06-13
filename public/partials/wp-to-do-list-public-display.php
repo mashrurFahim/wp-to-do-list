@@ -14,49 +14,30 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<?php
-
-if(is_user_logged_in()) {
-  $user_id = get_current_user_id();
-} else {
-  $user_id = 0;
-}
-
-$all_tasks = Wp_To_Do_List_Public::get_all_task_of_widget_of_single_user($user_id, $widget_id);
-
-
-$options = get_option('wp-to-do-list');
-$enable_widget_text_input = $options['enable_widget_text_input'];
-
-
-$enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_text_input ;
-
-?>
-
-<div class="todo-list">
+<div id='<?php echo $wrapper_id; ?>-wrapper' class="todo-list">  
   <div class="todo-body">
-    <?php if(!empty($all_tasks)) : ?>
     <div class="tasks">
+    <?php if(!empty($all_tasks)) : ?>
     <?php foreach($all_tasks as $task): ?>
       <div class="task" >
         <input 
           type="checkbox"
-          id="task-<?php echo $task->task_id; ?>"
+          id="<?php echo $wrapper_id; ?>-task-<?php echo $task->task_id; ?>"
           <?php echo ($task->task_status == 'completed') ? 'checked=checked' : ''; ?>
         />
-        <label for="task-<?php echo $task->task_id; ?>">
+        <label for="<?php echo $wrapper_id; ?>-task-<?php echo $task->task_id; ?>">
           <span class="custom-checkbox"></span>
           <?php echo $task->task_name; ?>
         </label>
       </div>
       <?php endforeach; ?>
+      <?php else: ?>
+      <h5 class="no-task-line"><?php echo __('No Task To Show', 'wp-to-do-list'); ?></h5>
+      <?php endif; ?>
     </div>
-    <?php else: ?>
-    <h5><?php echo __('No Task To Show', 'wp-to-do-list'); ?></h5>
-    <?php endif; ?>
     <?php if($enable_input) : ?>
       <div class="new-task-creator">
-        <form action="" method="POST" id="wp-to-do-list-form">
+        <form action="" method="POST" class="wp-to-do-list-form">
           <input
             type="hidden"
             name="action"
@@ -66,15 +47,15 @@ $enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_tex
           <input 
             type="hidden"
             name="wp_to_do_list[user_id]"
-            value="<?php echo $user_id ?>"
-            id="wp-to-do-list-user"
+            value="<?php echo $user_id; ?>"
+            id="<?php echo $wrapper_id; ?>-user"
           />
           
           <input 
             type="hidden"
-            name="wp_to_do_list[widget_id]"
-            value="<?php echo $widget_id ?>"
-            id="wp-to-do-list-widget"
+            name="wp_to_do_list[wrapper_id]"
+            value="<?php echo $wrapper_id; ?>"
+            id="<?php echo $wrapper_id; ?>-wrapper"
           />
           
           <input
@@ -84,7 +65,7 @@ $enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_tex
             class="new task"
             placeholder="new task name"
             aria-label="new task name"
-            id="wp-to-do-list-task"
+            id="<?php echo $wrapper_id; ?>-task"
           />
           <button class="btn create" aria-label="create new task">+</button>
         </form>
@@ -93,11 +74,11 @@ $enable_input = ($enable_widget_text_input) ? $enable_input : $enable_widget_tex
   </div>
 </div>
 
-<template id="task-template">
-  <div class="task">
-    <input type="checkbox" />
-    <label>
-      <span class="custom-checkbox"></span>
-    </label>
-  </div>
-</template>
+  <template id="task-template">
+    <div class="task">
+      <input type="checkbox" />
+      <label>
+        <span class="custom-checkbox"></span>
+      </label>
+    </div>
+  </template>
